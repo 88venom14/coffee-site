@@ -59,7 +59,7 @@ export function OrderDetail() {
   const confirmed = params.has('confirmed');
   const title = confirmed ? 'Заказ оформлен!' : `Заказ №${order.id}`;
   const message = confirmed
-    ? 'Спасибо, что выбрали KIN. Мы уже готовим для вас что-то вкусное.'
+    ? 'Спасибо, что выбрали Coffee. Мы уже готовим для вас что-то вкусное.'
     : `Оформлен ${new Date(order.createdAt).toLocaleDateString('ru-RU')}. Дальше мы всё сделаем сами.`;
 
   return (

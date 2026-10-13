@@ -14,7 +14,7 @@ export function Header() {
             <Coffee size={18} />
           </span>
           <span>
-            KIN<span className="brand-dot">.</span>
+            Coffee
           </span>
         </Link>
         <button
@@ -75,7 +75,7 @@ export function Footer() {
             <Coffee size={18} />
           </span>
           <span>
-            KIN<span className="brand-dot">.</span>
+            Coffee
           </span>
         </Link>
         <p>Хорошие вещи требуют времени. Мы проводим его за чашкой кофе.</p>
@@ -84,7 +84,7 @@ export function Footer() {
           <Link to="/products">Меню</Link>
           <Link to="/orders">Мои заказы</Link>
         </div>
-        <small>© {new Date().getFullYear()} KIN Coffee · Сделано с заботой</small>
+        <small>© {new Date().getFullYear()} Coffee · Сделано с заботой</small>
       </div>
     </footer>
   );

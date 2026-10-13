@@ -43,6 +43,6 @@ func run() error {
 		Handler: api,
 	}
 
-	log.Printf("KIN Coffee API listening on :%s", appConfig.Port)
+	log.Printf("Coffee API listening on :%s", appConfig.Port)
 	return server.ListenAndServe()
 }

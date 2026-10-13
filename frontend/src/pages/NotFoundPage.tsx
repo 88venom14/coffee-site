@@ -9,7 +9,7 @@ export function NotFoundPage() {
         <h2>Эта страница потерялась.</h2>
         <p>Не нашли нужное, зато всегда можно выпить хорошего кофе.</p>
         <Link to="/" className="button button-dark">
-          На главную KIN <ArrowRight size={16} />
+          На главную Coffee <ArrowRight size={16} />
         </Link>
       </div>
     </main>

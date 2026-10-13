@@ -29,7 +29,7 @@ export function HomePage() {
             </h1>
             <p>
               Кофе от ответственных обжарщиков, приготовленный не спеша и с заботой. Найдите свой
-              любимый напиток в KIN.
+              любимый напиток в Coffee.
             </p>
             <div className="hero-actions">
               <Link className="button button-dark" to="/products">
@@ -54,7 +54,7 @@ export function HomePage() {
               alt="Свежеприготовленный кофе в керамической чашке"
             />
             <div className="hero-image-caption">
-              <span className="caption-mark">KIN</span>
+              <span className="caption-mark">Coffee</span>
               <span>
                 Не спеша начинается утро
                 <br />— здесь.
@@ -98,7 +98,7 @@ export function HomePage() {
             <br />
             <em>Маленькая пауза, которая принадлежит вам.</em>
           </p>
-          <span>В СТИЛЕ KIN</span>
+          <span>В СТИЛЕ COFFEE</span>
         </section>
         <section className="section explore-section">
           <SectionTitle
@@ -145,10 +145,10 @@ export function HomePage() {
               печём что-нибудь тёплое и всегда оставляем место для вас.
             </p>
             <Link className="line-link" to="/about">
-              Больше о KIN <ArrowRight size={16} />
+              Больше о Coffee <ArrowRight size={16} />
             </Link>
             <div className="about-signature">
-              Ваши друзья из KIN <span>✳</span>
+              Ваши друзья из Coffee <span>✳</span>
             </div>
           </div>
         </section>

@@ -55,7 +55,7 @@ export function AuthPage({ register = false }: { register?: boolean }) {
           <span className="brand-icon">
             <Coffee size={17} />
           </span>
-          KIN<span className="brand-dot">.</span>
+          Coffee
         </Link>
         <p className="eyebrow">{register ? 'Добро пожаловать' : 'С возвращением'}</p>
         <h1>{register ? 'Давайте знакомиться.' : 'Рады видеть вас снова.'}</h1>

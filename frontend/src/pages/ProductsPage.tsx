@@ -80,7 +80,7 @@ export function ProductsPage() {
           className={popular ? 'filter-chip active' : 'filter-chip'}
           onClick={() => set('popular', popular ? '' : 'true')}
         >
-          Любимое в KIN <Heart size={14} />
+          Любимое в Coffee <Heart size={14} />
         </button>
       </div>
       <section className="category-filter" aria-label="Фильтр по категориям">

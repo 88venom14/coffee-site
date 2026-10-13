@@ -44,7 +44,7 @@ export function OrdersPage() {
         <h1>
           Ваши <em>заказы.</em>
         </h1>
-        <p>Всё, что вы заказывали в KIN.</p>
+        <p>Всё, что вы заказывали в Coffee.</p>
       </div>
       {error && <p className="form-error">{error}</p>}
       {orders.length === 0 && !error ? (

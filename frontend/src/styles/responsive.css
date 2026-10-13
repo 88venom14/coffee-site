@@ -608,3 +608,66 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+@media (max-width: 720px) {
+  .hero-kicker,
+  .eyebrow,
+  .section-title .eyebrow {
+    font-size: 10px;
+  }
+
+  .hero-copy > p,
+  .about-copy > p:not(.eyebrow),
+  .story-copy > p:not(.eyebrow),
+  .page-intro > p:last-child,
+  .auth-sub,
+  .confirm-copy {
+    font-size: 12px;
+  }
+
+  .hero-note,
+  .hero-secondary,
+  .button,
+  .footer-links,
+  .filter-chip,
+  .custom-select-trigger,
+  .category-pill,
+  .product-desc,
+  .add-button,
+  .cart-item-copy > p,
+  .cart-item-copy > span,
+  .breadcrumbs,
+  .auth-switch,
+  .order-status {
+    font-size: 11px;
+  }
+
+  .product-price,
+  .cart-line-end strong,
+  .quantity-control.small span {
+    font-size: 12px;
+  }
+
+  .image-label,
+  .product-heading .eyebrow,
+  .category-filter-heading .eyebrow,
+  .results-meta,
+  .order-row .eyebrow,
+  .footer-inner > p,
+  .footer-inner small {
+    font-size: 10px;
+  }
+
+  .field-grid label,
+  .auth-form label,
+  .address-field,
+  .form-section > div > p {
+    font-size: 12px;
+  }
+
+  .field-grid input,
+  .auth-form input,
+  .address-field textarea {
+    font-size: 16px;
+  }
+}

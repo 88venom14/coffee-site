@@ -29,7 +29,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       <Link to={`/products/${product.id}`} className="product-image-link">
         <img className="product-image" src={product.imageUrl} alt={product.name} loading="lazy" />
         <span className="image-label">
-          {product.popular ? 'Любимое в KIN' : localizeCategory(product.category)}
+          {product.popular ? 'Любимое в Coffee' : localizeCategory(product.category)}
         </span>
         <span className="image-arrow">
           <ArrowUpRight size={17} />

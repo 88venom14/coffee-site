@@ -194,7 +194,7 @@ export function CheckoutPage() {
             {busy ? 'Оформляем заказ…' : 'Подтвердить заказ'} <ArrowRight size={16} />
           </button>
           <p className="summary-small">
-            Оплачивать сейчас не нужно. Команда KIN подтвердит ваш заказ.
+            Оплачивать сейчас не нужно. Команда Coffee подтвердит ваш заказ.
           </p>
         </aside>
       </form>

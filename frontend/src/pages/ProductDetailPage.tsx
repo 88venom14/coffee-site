@@ -51,7 +51,7 @@ export function ProductDetailPage() {
       <div className="detail-layout">
         <div className="detail-image">
           <img src={product.imageUrl} alt={product.name} />
-          <span>{product.popular ? 'Любимое в KIN' : localizeCategory(product.category)}</span>
+          <span>{product.popular ? 'Любимое в Coffee' : localizeCategory(product.category)}</span>
         </div>
         <div className="detail-copy">
           <p className="eyebrow">Приготовлено с заботой · {localizeCategory(product.category)}</p>
