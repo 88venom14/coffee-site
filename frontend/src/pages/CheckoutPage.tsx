@@ -90,6 +90,7 @@ export function CheckoutPage() {
                 <input
                   required
                   minLength={2}
+                  maxLength={100}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   autoComplete="name"
@@ -100,6 +101,7 @@ export function CheckoutPage() {
                 <input
                   type="email"
                   required
+                  maxLength={254}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
@@ -110,6 +112,10 @@ export function CheckoutPage() {
                 <input
                   type="tel"
                   required
+                  minLength={5}
+                  maxLength={40}
+                  pattern="[0-9+(). -]{5,40}"
+                  title="Используйте цифры, пробелы, +, скобки, точки и дефисы."
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   autoComplete="tel"
@@ -156,6 +162,7 @@ export function CheckoutPage() {
                 <textarea
                   required
                   minLength={5}
+                  maxLength={500}
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   rows={3}

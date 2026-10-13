@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { SiteLayout } from './components/SiteChrome';
 import { HomePage } from './pages/HomePage';
 import { ProductsPage } from './pages/ProductsPage';
@@ -7,7 +7,6 @@ import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { AuthPage } from './pages/AuthPage';
 import { AccountPage } from './pages/AccountPage';
-import { OrdersPage } from './pages/OrdersPage';
 import { OrderDetail } from './pages/OrderDetailPage';
 import { AboutPage } from './pages/AboutPage';
 import { NotFoundPage } from './pages/NotFoundPage';
@@ -89,11 +88,7 @@ export default function App() {
       />
       <Route
         path="/orders"
-        element={
-          <SiteLayout>
-            <OrdersPage />
-          </SiteLayout>
-        }
+        element={<Navigate to="/account#orders" replace />}
       />
       <Route
         path="/orders/:id"

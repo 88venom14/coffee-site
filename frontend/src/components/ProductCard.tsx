@@ -1,4 +1,4 @@
-import { useState, type CSSProperties, type MouseEvent } from 'react';
+import { useState, type MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Plus } from 'lucide-react';
 import { useStore } from '../context';
@@ -6,7 +6,7 @@ import { formatPrice } from '../utils/formatPrice';
 import { localizeCategory } from '../utils/localization';
 import type { Product } from '../types';
 
-export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
+export function ProductCard({ product }: { product: Product }) {
   const { addToCart, user } = useStore();
   const [message, setMessage] = useState('');
   async function add(e: MouseEvent) {
@@ -25,7 +25,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
     setTimeout(() => setMessage(''), 2600);
   }
   return (
-    <article className="product-card" style={{ '--delay': `${index * 60}ms` } as CSSProperties}>
+    <article className="product-card">
       <Link to={`/products/${product.id}`} className="product-image-link">
         <img className="product-image" src={product.imageUrl} alt={product.name} loading="lazy" />
         <span className="image-label">

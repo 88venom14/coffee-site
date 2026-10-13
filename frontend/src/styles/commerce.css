@@ -45,8 +45,6 @@
 
 .product-card {
   min-width: 0;
-  animation: rise 0.48s both;
-  animation-delay: var(--delay);
   transition: transform 0.3s ease;
 }
 
@@ -458,24 +456,82 @@
   transition: opacity 0.28s ease, filter 0.28s ease;
 }
 
-.catalog-grid[aria-busy='true'] {
+.catalog-grid[aria-busy='true']:not(.catalog-grid-loading) {
   opacity: 0.48;
   filter: blur(1.5px);
   pointer-events: none;
 }
 
+.product-card-skeleton {
+  pointer-events: none;
+}
+
+.skeleton-surface {
+  display: block;
+  background: linear-gradient(100deg, #eee2d6 25%, #f7eee6 42%, #eee2d6 58%);
+  background-size: 220% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  min-height: 35px;
+  gap: 12px;
+}
+
+.skeleton-category {
+  width: 58px;
+  height: 8px;
+  margin: 2px 0 5px;
+}
+
+.skeleton-price {
+  width: 38px;
+  height: 11px;
+  margin-top: 14px;
+}
+
+.skeleton-name {
+  width: 78%;
+  height: 18px;
+  margin-top: 1px;
+}
+
+.skeleton-description {
+  width: 100%;
+  height: 7px;
+  margin-top: 10px;
+}
+
+.skeleton-description-short {
+  width: 64%;
+  margin-top: 5px;
+}
+
+.skeleton-button {
+  width: 82px;
+  height: 14px;
+  margin-top: 17px;
+}
+
+@keyframes skeleton-shimmer {
+  to {
+    background-position-x: -220%;
+  }
+}
+
 .route-transition {
-  animation: route-enter 0.42s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation: route-enter 0.18s ease-out both;
 }
 
 @keyframes route-enter {
   from {
     opacity: 0;
-    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 

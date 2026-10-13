@@ -43,7 +43,7 @@ export function OrderDetail() {
       <main className="page-shell center-page">
         <div className="empty-state">
           <h2>{error}</h2>
-          <Link to="/orders" className="button button-dark">
+          <Link to="/account#orders" className="button button-dark">
             К списку заказов
           </Link>
         </div>
@@ -94,7 +94,7 @@ export function OrderDetail() {
       <Link to="/products" className="button button-dark">
         Выбрать что-нибудь ещё <ArrowRight size={16} />
       </Link>
-      <Link to="/orders" className="line-link">
+      <Link to="/account#orders" className="line-link">
         Все заказы
       </Link>
     </main>

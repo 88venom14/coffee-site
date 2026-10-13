@@ -486,6 +486,18 @@
   .account-card {
     min-height: 145px;
   }
+  .account-orders {
+    margin-top: 42px;
+  }
+  .account-section-heading {
+    align-items: flex-start;
+  }
+  .account-section-heading h2 {
+    font-size: 27px;
+  }
+  .account-orders-error {
+    flex-direction: column;
+  }
   .order-row {
     grid-template-columns: 1fr auto 18px;
     gap: 10px;
@@ -494,7 +506,8 @@
   .order-row .eyebrow {
     font-size: 7px;
   }
-  .order-row h2 {
+  .order-row h2,
+  .order-row h3 {
     font-size: 16px;
   }
   .order-row > strong {

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"kin-coffee/backend/internal/models"
 	"kin-coffee/backend/internal/repositories"
@@ -36,6 +37,15 @@ func (h *Handler) ListProducts(w http.ResponseWriter, r *http.Request) {
 }
 
 func validFilters(filters models.ProductFilters) bool {
+	if utf8.RuneCountInString(filters.Search) > 120 || len(filters.Category) > 40 || len(filters.Sort) > 20 {
+		return false
+	}
+	if filters.Category != "" && !oneOf(filters.Category, "coffee", "tea", "cold-drinks", "pastries", "desserts", "accessories") {
+		return false
+	}
+	if filters.Sort != "" && !oneOf(filters.Sort, "price_asc", "price_desc", "newest", "popular") {
+		return false
+	}
 	minPrice, minValid := optionalNonNegativeNumber(filters.MinPrice)
 	maxPrice, maxValid := optionalNonNegativeNumber(filters.MaxPrice)
 	if !minValid || !maxValid || (filters.MinPrice != "" && filters.MaxPrice != "" && minPrice > maxPrice) {
@@ -48,6 +58,15 @@ func validFilters(filters models.ProductFilters) bool {
 		return false
 	}
 	return true
+}
+
+func oneOf(value string, allowed ...string) bool {
+	for _, option := range allowed {
+		if value == option {
+			return true
+		}
+	}
+	return false
 }
 
 func optionalNonNegativeNumber(value string) (float64, bool) {

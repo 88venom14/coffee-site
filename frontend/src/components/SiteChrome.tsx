@@ -1,11 +1,23 @@
-import { useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { ArrowUpRight, Coffee, Menu, ShoppingBag, X } from 'lucide-react';
 import { useStore } from '../context';
+import { CartDrawer } from './CartDrawer';
 
 export function Header() {
   const { user, cart, signOut } = useStore();
   const [open, setOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const cartButtonRef = useRef<HTMLButtonElement>(null);
+  const location = useLocation();
+  const cartCount = cart.items.reduce((count, item) => count + item.quantity, 0);
+  const closeCart = useCallback(() => setCartOpen(false), []);
+
+  useEffect(() => {
+    setCartOpen(false);
+    setOpen(false);
+  }, [location.pathname]);
+
   return (
     <header className="header">
       <div className="nav-wrap">
@@ -34,18 +46,21 @@ export function Header() {
           <NavLink to="/products" onClick={() => setOpen(false)}>
             Меню
           </NavLink>
-          <NavLink to="/orders" onClick={() => setOpen(false)}>
-            Заказы
-          </NavLink>
         </nav>
         <div className="nav-actions">
-          <Link to="/cart" className="cart-link" aria-label="Корзина">
+          <button
+            ref={cartButtonRef}
+            type="button"
+            className="cart-link"
+            aria-label={`Корзина, товаров: ${cartCount}`}
+            aria-haspopup="dialog"
+            aria-expanded={cartOpen}
+            onClick={() => setCartOpen(true)}
+          >
             <ShoppingBag size={18} />
             <span>Корзина</span>
-            {cart.items.length > 0 && (
-              <b className="cart-count">{cart.items.reduce((n, i) => n + i.quantity, 0)}</b>
-            )}
-          </Link>
+            {cartCount > 0 && <b className="cart-count">{cartCount}</b>}
+          </button>
           {user ? (
             <div className="account-menu">
               <Link to="/account" className="account-name">
@@ -62,6 +77,7 @@ export function Header() {
           )}
         </div>
       </div>
+      <CartDrawer open={cartOpen} onClose={closeCart} />
     </header>
   );
 }
@@ -82,7 +98,7 @@ export function Footer() {
         <div className="footer-links">
           <Link to="/about">О нас</Link>
           <Link to="/products">Меню</Link>
-          <Link to="/orders">Мои заказы</Link>
+          <Link to="/account#orders">Мои заказы</Link>
         </div>
         <small>© {new Date().getFullYear()} Coffee · Сделано с заботой</small>
       </div>
@@ -93,6 +109,21 @@ export function Footer() {
 export function SiteLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const { user } = useStore();
+  useLayoutEffect(() => {
+    const anchor = location.hash
+      ? document.getElementById(decodeURIComponent(location.hash.slice(1)))
+      : null;
+
+    if (anchor) {
+      document.documentElement.scrollTop =
+        window.scrollY + anchor.getBoundingClientRect().top - 28;
+      return;
+    }
+
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [location.pathname, location.hash]);
+
   const isAuthPage =
     location.pathname === '/login' ||
     location.pathname === '/register' ||

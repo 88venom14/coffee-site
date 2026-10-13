@@ -9,6 +9,7 @@ import (
 )
 
 type Config struct {
+	Host           string
 	DatabaseURL    string
 	Port           string
 	SessionSecret  string
@@ -20,6 +21,7 @@ func Load() (Config, error) {
 	_ = godotenv.Load(".env", "../.env", "../../.env")
 
 	cfg := Config{
+		Host:           strings.TrimSpace(os.Getenv("HOST")),
 		DatabaseURL:    strings.TrimSpace(os.Getenv("DATABASE_URL")),
 		Port:           strings.TrimSpace(os.Getenv("PORT")),
 		SessionSecret:  os.Getenv("SESSION_SECRET"),
@@ -35,6 +37,9 @@ func Load() (Config, error) {
 	}
 	if cfg.Port == "" {
 		cfg.Port = "8080"
+	}
+	if cfg.Host == "" {
+		cfg.Host = "127.0.0.1"
 	}
 
 	return cfg, nil

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"strings"
 	"testing"
 
 	"kin-coffee/backend/internal/models"
@@ -51,5 +52,36 @@ func TestValidateCheckoutTrimsAndNormalizesContactDetails(t *testing.T) {
 	}
 	if validated.Name != "Alex Example" || validated.Email != "alex@example.com" || validated.Address != "12 Market Street" {
 		t.Fatalf("ValidateCheckout() did not normalize details: %#v", validated)
+	}
+}
+
+func TestValidateCheckoutRejectsOverlongOrMalformedFields(t *testing.T) {
+	tests := []struct {
+		name  string
+		input models.CheckoutInput
+	}{
+		{
+			name:  "name exceeds character limit",
+			input: models.CheckoutInput{OrderType: "pickup", Name: strings.Repeat("я", 101), Email: "alex@example.com", Phone: "+353 800 123 456"},
+		},
+		{
+			name:  "email exceeds limit",
+			input: models.CheckoutInput{OrderType: "pickup", Name: "Alex Example", Email: strings.Repeat("a", 243) + "@example.com", Phone: "+353 800 123 456"},
+		},
+		{
+			name:  "phone contains unsupported characters",
+			input: models.CheckoutInput{OrderType: "pickup", Name: "Alex Example", Email: "alex@example.com", Phone: "12345<script>"},
+		},
+		{
+			name:  "delivery address exceeds character limit",
+			input: models.CheckoutInput{OrderType: "delivery", Name: "Alex Example", Email: "alex@example.com", Phone: "+353 800 123 456", Address: strings.Repeat("я", 501)},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if _, err := ValidateCheckout(test.input); err != ErrInvalidInput {
+				t.Fatalf("ValidateCheckout() error = %v, want %v", err, ErrInvalidInput)
+			}
+		})
 	}
 }

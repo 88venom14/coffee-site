@@ -1,8 +1,20 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowRight, Coffee } from 'lucide-react';
+import { ArrowRight, Coffee, Eye, EyeOff } from 'lucide-react';
 import { api } from '../api';
 import { useStore } from '../context';
+
+function limitUtf8Bytes(value: string, limit: number) {
+  let result = '';
+  let bytes = 0;
+  for (const character of value) {
+    const size = new TextEncoder().encode(character).length;
+    if (bytes + size > limit) break;
+    result += character;
+    bytes += size;
+  }
+  return result;
+}
 
 export function AuthPage({ register = false }: { register?: boolean }) {
   const { signIn } = useStore();
@@ -12,11 +24,29 @@ export function AuthPage({ register = false }: { register?: boolean }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   async function submit(e: FormEvent) {
     e.preventDefault();
     setError('');
+    if (email.trim().length > 254) {
+      setError('Электронная почта не должна быть длиннее 254 символов.');
+      return;
+    }
+    if (new TextEncoder().encode(password).length > 72) {
+      setError('Пароль не должен быть длиннее 72 байт.');
+      return;
+    }
+    if (register && (Array.from(name.trim()).length < 2 || Array.from(name.trim()).length > 100)) {
+      setError('Имя должно содержать от 2 до 100 символов.');
+      return;
+    }
+    if (register && Array.from(password).length < 8) {
+      setError('Пароль должен содержать не менее 8 символов.');
+      return;
+    }
     if (register && password !== confirm) {
       setError('Пароли не совпадают.');
       return;
@@ -71,10 +101,12 @@ export function AuthPage({ register = false }: { register?: boolean }) {
               <input
                 required
                 minLength={2}
+                maxLength={100}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 autoComplete="name"
               />
+              <small>От 2 до 100 символов.</small>
             </label>
           )}
           <label>
@@ -82,34 +114,64 @@ export function AuthPage({ register = false }: { register?: boolean }) {
             <input
               type="email"
               required
+              maxLength={254}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
             />
+            <small>Не более 254 символов.</small>
           </label>
           <label>
             Пароль
-            <input
-              type="password"
-              required
-              minLength={8}
-              maxLength={72}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete={register ? 'new-password' : 'current-password'}
-            />
-            {register && <small>Не менее 8 символов.</small>}
+            <span className="password-input-wrap">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                minLength={register ? 8 : undefined}
+                maxLength={72}
+                value={password}
+                onChange={(e) => setPassword(limitUtf8Bytes(e.target.value, 72))}
+                autoComplete={register ? 'new-password' : 'current-password'}
+                aria-describedby="password-hint"
+              />
+              <button
+                className="password-visibility"
+                type="button"
+                onClick={() => setShowPassword((visible) => !visible)}
+                aria-label={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
+                aria-pressed={showPassword}
+              >
+                {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+              </button>
+            </span>
+            <small id="password-hint">
+              {register ? 'Не менее 8 символов; максимум — 72 байта.' : 'Максимум — 72 байта.'}
+            </small>
           </label>
           {register && (
             <label>
               Повторите пароль
-              <input
-                type="password"
-                required
-                value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
-                autoComplete="new-password"
-              />
+              <span className="password-input-wrap">
+                <input
+                  type={showConfirm ? 'text' : 'password'}
+                  required
+                  maxLength={72}
+                  value={confirm}
+                  onChange={(e) => setConfirm(limitUtf8Bytes(e.target.value, 72))}
+                  autoComplete="new-password"
+                  aria-describedby="confirm-hint"
+                />
+                <button
+                  className="password-visibility"
+                  type="button"
+                  onClick={() => setShowConfirm((visible) => !visible)}
+                  aria-label={showConfirm ? 'Скрыть повтор пароля' : 'Показать повтор пароля'}
+                  aria-pressed={showConfirm}
+                >
+                  {showConfirm ? <EyeOff size={17} /> : <Eye size={17} />}
+                </button>
+              </span>
+              <small id="confirm-hint">Максимум — 72 байта.</small>
             </label>
           )}
           {error && (

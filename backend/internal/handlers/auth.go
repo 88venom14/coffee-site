@@ -24,7 +24,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	user, token, err := h.auth.Register(r.Context(), input.Name, input.Email, input.Password)
 	switch {
 	case errors.Is(err, services.ErrInvalidInput):
-		WriteError(w, http.StatusBadRequest, "Укажите корректные имя и электронную почту. Пароль должен содержать от 8 до 72 символов.")
+		WriteError(w, http.StatusBadRequest, "Укажите имя от 2 до 100 символов, корректную почту и пароль от 8 до 72 байт.")
 		return
 	case errors.Is(err, services.ErrEmailTaken):
 		WriteError(w, http.StatusConflict, "Аккаунт с такой электронной почтой уже существует.")
@@ -51,7 +51,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	user, token, err := h.auth.Login(r.Context(), input.Email, input.Password)
 	switch {
 	case errors.Is(err, services.ErrInvalidInput):
-		WriteError(w, http.StatusBadRequest, "Enter your email and password.")
+		WriteError(w, http.StatusBadRequest, "Укажите корректную электронную почту и пароль не длиннее 72 байт.")
 		return
 	case errors.Is(err, services.ErrUnauthorized):
 		WriteError(w, http.StatusUnauthorized, "Неверная электронная почта или пароль.")

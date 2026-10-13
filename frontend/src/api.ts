@@ -31,7 +31,7 @@ export async function request<T>(path: string, options: RequestInit = {}): Promi
   return result.data;
 }
 export const api = {
-  products: (query = '') => request<Product[]>(`/products${query}`),
+  products: (query = '', options?: RequestInit) => request<Product[]>(`/products${query}`, options),
   product: (id: string) => request<Product>(`/products/${id}`),
   me: () => request<User>('/auth/me'),
   login: (email: string, password: string) =>

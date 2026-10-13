@@ -3,7 +3,9 @@ package main
 import (
 	"context"
 	"log"
+	"net"
 	"net/http"
+	"time"
 
 	"kin-coffee/backend/internal/config"
 	"kin-coffee/backend/internal/database"
@@ -39,10 +41,15 @@ func run() error {
 	api := routes.New(apiHandlers, middleware.RequireAuth(authService), appConfig.FrontendOrigin)
 
 	server := &http.Server{
-		Addr:    ":" + appConfig.Port,
-		Handler: api,
+		Addr:              net.JoinHostPort(appConfig.Host, appConfig.Port),
+		Handler:           api,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       15 * time.Second,
+		WriteTimeout:      30 * time.Second,
+		IdleTimeout:       60 * time.Second,
+		MaxHeaderBytes:    32 << 10,
 	}
 
-	log.Printf("Coffee API listening on :%s", appConfig.Port)
+	log.Printf("Coffee API listening on %s", server.Addr)
 	return server.ListenAndServe()
 }

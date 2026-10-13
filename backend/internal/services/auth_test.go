@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
 
 	"kin-coffee/backend/internal/models"
@@ -89,6 +90,47 @@ func TestRegisterRejectsInvalidInput(t *testing.T) {
 	_, _, err := auth.Register(context.Background(), "A", "not-an-email", "short")
 	if !errors.Is(err, ErrInvalidInput) {
 		t.Fatalf("Register() error = %v, want %v", err, ErrInvalidInput)
+	}
+}
+
+func TestRegisterRejectsOverlongFieldsAndShortPasswords(t *testing.T) {
+	auth := NewAuth(newMemoryAuthRepository(), "a-long-test-session-secret-value-123456")
+	tests := []struct {
+		name     string
+		userName string
+		email    string
+		password string
+	}{
+		{name: "name exceeds character limit", userName: strings.Repeat("я", 101), email: "a@example.com", password: "coffee-password"},
+		{name: "email exceeds limit", userName: "Casey Example", email: strings.Repeat("a", 243) + "@example.com", password: "coffee-password"},
+		{name: "password below character minimum", userName: "Casey Example", email: "a@example.com", password: "1234567"},
+		{name: "password exceeds bcrypt byte limit", userName: "Casey Example", email: "a@example.com", password: strings.Repeat("😀", 19)},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if _, _, err := auth.Register(context.Background(), test.userName, test.email, test.password); !errors.Is(err, ErrInvalidInput) {
+				t.Fatalf("Register() error = %v, want %v", err, ErrInvalidInput)
+			}
+		})
+	}
+}
+
+func TestLoginRejectsOverlongFields(t *testing.T) {
+	auth := NewAuth(newMemoryAuthRepository(), "a-long-test-session-secret-value-123456")
+	tests := []struct {
+		name     string
+		email    string
+		password string
+	}{
+		{name: "email exceeds limit", email: strings.Repeat("a", 243) + "@example.com", password: "password"},
+		{name: "password exceeds bcrypt byte limit", email: "a@example.com", password: strings.Repeat("x", 73)},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if _, _, err := auth.Login(context.Background(), test.email, test.password); !errors.Is(err, ErrInvalidInput) {
+				t.Fatalf("Login() error = %v, want %v", err, ErrInvalidInput)
+			}
+		})
 	}
 }
 

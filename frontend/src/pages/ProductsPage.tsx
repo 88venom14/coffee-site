@@ -19,6 +19,7 @@ const categories = [
 export function ProductsPage() {
   const [params, setParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
+  const [searchInput, setSearchInput] = useState(params.get('search') || '');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const search = params.get('search') || '';
@@ -26,15 +27,33 @@ export function ProductsPage() {
   const sort = params.get('sort') || '';
   const popular = params.get('popular') || '';
   useEffect(() => {
+    const controller = new AbortController();
     setLoading(true);
     setError('');
     const query = params.toString();
     api
-      .products(query ? `?${query}` : '')
+      .products(query ? `?${query}` : '', { signal: controller.signal })
       .then(setProducts)
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
+      .catch((e) => {
+        if (!controller.signal.aborted) setError(e.message);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+    return () => controller.abort();
   }, [params]);
+  useEffect(() => {
+    setSearchInput(search);
+  }, [search]);
+  useEffect(() => {
+    if (searchInput === search) return;
+    const timeout = window.setTimeout(() => {
+      const next = new URLSearchParams(params);
+      searchInput ? next.set('search', searchInput) : next.delete('search');
+      setParams(next);
+    }, 300);
+    return () => window.clearTimeout(timeout);
+  }, [params, search, searchInput, setParams]);
   const set = (key: string, value: string) => {
     const next = new URLSearchParams(params);
     value ? next.set(key, value) : next.delete(key);
@@ -53,13 +72,14 @@ export function ProductsPage() {
         <label className="search-box">
           <span>⌕</span>
           <input
-            value={search}
-            onChange={(e) => set('search', e.target.value)}
+            value={searchInput}
+            maxLength={120}
+            onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Найти что-нибудь вкусное…"
             aria-label="Поиск по товарам"
           />
-          {search && (
-            <button onClick={() => set('search', '')} aria-label="Очистить поиск">
+          {searchInput && (
+            <button onClick={() => setSearchInput('')} aria-label="Очистить поиск">
               <X size={15} />
             </button>
           )}
@@ -104,7 +124,9 @@ export function ProductsPage() {
         </div>
       </section>
       <div className="results-meta">
-        <span>{loading ? 'Ищем любимые товары…' : `Позиций: ${products.length}`}</span>
+        <span role="status" aria-live="polite">
+          {loading ? 'Ищем любимые товары…' : `Позиций: ${products.length}`}
+        </span>
         <span>
           Каждый день свежие <span className="tiny-spark">✳</span>
         </span>
@@ -123,10 +145,27 @@ export function ProductsPage() {
           </button>
         </div>
       ) : (
-        <div className="product-grid catalog-grid" aria-busy={loading}>
-          {products.map((p, i) => (
-            <ProductCard product={p} index={i} key={p.id} />
-          ))}
+        <div
+          className={`product-grid catalog-grid${loading && products.length === 0 ? ' catalog-grid-loading' : ''}`}
+          aria-busy={loading}
+        >
+          {loading && products.length === 0
+            ? Array.from({ length: search || category || popular ? 6 : 14 }, (_, index) => (
+                <article className="product-card product-card-skeleton" key={`skeleton-${index}`} aria-hidden="true">
+                  <div className="product-image-link skeleton-surface" />
+                  <div className="product-info">
+                    <div className="skeleton-heading">
+                      <span className="skeleton-surface skeleton-category" />
+                      <span className="skeleton-surface skeleton-price" />
+                    </div>
+                    <span className="skeleton-surface skeleton-name" />
+                    <span className="skeleton-surface skeleton-description" />
+                    <span className="skeleton-surface skeleton-description skeleton-description-short" />
+                    <span className="skeleton-surface skeleton-button" />
+                  </div>
+                </article>
+              ))
+            : products.map((p) => <ProductCard product={p} key={p.id} />)}
         </div>
       )}
     </main>

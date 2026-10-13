@@ -85,8 +85,8 @@ export function HomePage() {
               {products
                 .filter((p) => p.popular)
                 .slice(0, 6)
-                .map((p, i) => (
-                  <ProductCard key={p.id} product={p} index={i} />
+                .map((p) => (
+                  <ProductCard key={p.id} product={p} />
                 ))}
             </div>
           )}
@@ -112,8 +112,8 @@ export function HomePage() {
               {products
                 .filter((p) => !p.popular)
                 .slice(0, 4)
-                .map((p, i) => (
-                  <ProductCard key={p.id} product={p} index={i} />
+                .map((p) => (
+                  <ProductCard key={p.id} product={p} />
                 ))}
             </div>
           ) : (

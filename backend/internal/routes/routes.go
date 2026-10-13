@@ -2,8 +2,10 @@ package routes
 
 import (
 	"net/http"
+	"time"
 
 	"kin-coffee/backend/internal/handlers"
+	"kin-coffee/backend/internal/middleware"
 )
 
 func New(api *handlers.Handler, requireAuth func(http.Handler) http.Handler, frontendOrigin string) http.Handler {
@@ -13,17 +15,17 @@ func New(api *handlers.Handler, requireAuth func(http.Handler) http.Handler, fro
 		handlers.WriteJSON(w, http.StatusOK, map[string]string{"status": "ok"})
 	})
 
-	registerPublicRoutes(mux, api)
+	registerPublicRoutes(mux, api, middleware.IPRateLimit(10, time.Minute))
 	registerProtectedRoutes(mux, api, requireAuth)
 
-	return cors(frontendOrigin, mux)
+	return middleware.SecurityHeaders(cors(frontendOrigin, mux))
 }
 
-func registerPublicRoutes(mux *http.ServeMux, api *handlers.Handler) {
+func registerPublicRoutes(mux *http.ServeMux, api *handlers.Handler, limitAuth func(http.Handler) http.Handler) {
 	mux.HandleFunc("GET /api/products", api.ListProducts)
 	mux.HandleFunc("GET /api/products/{id}", api.GetProduct)
-	mux.HandleFunc("POST /api/auth/register", api.Register)
-	mux.HandleFunc("POST /api/auth/login", api.Login)
+	mux.Handle("POST /api/auth/register", limitAuth(http.HandlerFunc(api.Register)))
+	mux.Handle("POST /api/auth/login", limitAuth(http.HandlerFunc(api.Login)))
 	mux.HandleFunc("POST /api/auth/logout", api.Logout)
 }
 

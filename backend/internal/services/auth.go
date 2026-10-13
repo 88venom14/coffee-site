@@ -9,6 +9,7 @@ import (
 	"errors"
 	"net/mail"
 	"strings"
+	"unicode/utf8"
 
 	"kin-coffee/backend/internal/models"
 	"kin-coffee/backend/internal/repositories"
@@ -17,6 +18,13 @@ import (
 )
 
 const SessionCookieName = "kin_session"
+
+const (
+	minNameLength       = 2
+	maxNameLength       = 100
+	minPasswordLength   = 8
+	maxPasswordByteSize = 72
+)
 
 type authRepository interface {
 	CreateUser(context.Context, string, string, string) (models.User, error)
@@ -38,7 +46,8 @@ func NewAuth(repository authRepository, sessionSecret string) *Auth {
 func (a *Auth) Register(ctx context.Context, name, email, password string) (models.User, string, error) {
 	name = strings.TrimSpace(name)
 	email = strings.ToLower(strings.TrimSpace(email))
-	if len(name) < 2 || len(name) > 100 || len(password) < 8 || len(password) > 72 || !validEmail(email) {
+	if utf8.RuneCountInString(name) < minNameLength || utf8.RuneCountInString(name) > maxNameLength ||
+		utf8.RuneCountInString(password) < minPasswordLength || len(password) > maxPasswordByteSize || !validEmail(email) {
 		return models.User{}, "", ErrInvalidInput
 	}
 
@@ -61,7 +70,7 @@ func (a *Auth) Register(ctx context.Context, name, email, password string) (mode
 
 func (a *Auth) Login(ctx context.Context, email, password string) (models.User, string, error) {
 	email = strings.ToLower(strings.TrimSpace(email))
-	if email == "" || password == "" {
+	if !validEmail(email) || len(password) == 0 || len(password) > maxPasswordByteSize {
 		return models.User{}, "", ErrInvalidInput
 	}
 
@@ -108,6 +117,9 @@ func (a *Auth) hashToken(token string) string {
 }
 
 func validEmail(email string) bool {
+	if len(email) == 0 || len(email) > 254 {
+		return false
+	}
 	parsed, err := mail.ParseAddress(email)
 	return err == nil && parsed.Address == email
 }
